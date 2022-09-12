@@ -1,0 +1,27 @@
+#!/bin/bash
+###
+# File: update-gradle.sh
+# Author: Leopold Meinel (leo@meinel.dev)
+# -----
+# Copyright (c) 2022 Leopold Meinel & contributors
+# SPDX ID: GPL-3.0-or-later
+# URL: https://www.gnu.org/licenses/gpl-3.0-standalone.html
+# -----
+###
+case "$1" in
+update-gradle)
+    DIRECTORIES=$(/usr/bin/find ~/src/ -type f -name 'build.gradle' -printf '%h\n' | sort -u)
+    for directory in $DIRECTORIES; do
+        cd "$directory"
+        gradle wrapper --gradle-version 7.5.1
+    done
+    ;;
+build-all)
+    DIRECTORIES=$(/usr/bin/find ~/src/ -type f -name 'build.gradle' -printf '%h\n' | sort -u)
+    for directory in $DIRECTORIES; do
+        cd "$directory"
+        gradle build
+    done
+    ;;
+esac
+cd ~
