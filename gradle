@@ -9,19 +9,33 @@
 # -----
 ###
 
+DIRECTORIES=$(/usr/bin/find "$2" -type f -name 'build.gradle' -printf '%h\n' | sort -u)
 case "$1" in
-update-gradle)
-    DIRECTORIES=$(/usr/bin/find ~/src/ -type f -name 'build.gradle' -printf '%h\n' | sort -u)
+update)
     for directory in $DIRECTORIES; do
         cd "$directory"
         gradle wrapper --gradle-version 7.5.1
     done
     ;;
-build-all)
-    DIRECTORIES=$(/usr/bin/find ~/src/ -type f -name 'build.gradle' -printf '%h\n' | sort -u)
+build)
     for directory in $DIRECTORIES; do
         cd "$directory"
         gradle build
+    done
+    ;;
+move)
+    for directory in $DIRECTORIES; do
+        cp "$directory"/build/libs/* "$3"
+        rm -rf "$directory"/build/libs/*
+    done
+    ;;
+clean)
+    for directory in $DIRECTORIES; do
+        cd "$directory"
+        gradle clean
+        rm -rf "$directory"/build
+        rm -rf "$directory"/bin
+        rm -rf "$directory"/.gradle
     done
     ;;
 esac
