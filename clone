@@ -9,10 +9,10 @@
 # -----
 ###
 
-SOURCE_DIR="$3"
-: "${SOURCE_DIR:="~/src"}"
 NAME="$2"
-: "${NAME:="LeoMeinel"}"
+: ${NAME:="LeoMeinel"}
+SOURCE_DIR="$3"
+: ${SOURCE_DIR:=~/src}
 
 PAGE=1
 case "$1" in
