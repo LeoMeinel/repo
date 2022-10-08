@@ -9,33 +9,43 @@
 # -----
 ###
 
-DIRECTORIES=$(/usr/bin/find "$2" -type f -name 'build.gradle' -printf '%h\n' | sort -u)
+SOURCE_DIR="$2"
+: ${SOURCE_DIR:=~/src}
+DEBUG_DIR="$3"
+: ${DEBUG_DIR:=~/src/02_debug}
+
+set -eu
+
+DIRECTORIES=$(/usr/bin/find "$SOURCE_DIR" -type f -name 'build.gradle' -printf '%h\n' | sort -u)
 case "$1" in
 update)
     for directory in $DIRECTORIES; do
-        cd "$directory"
+        cd "${directory:?}"
         gradle wrapper --gradle-version 7.5.1
     done
     ;;
 build)
+    mkdir -p "${DEBUG_DIR:?}/"java/papermc/plugins
     for directory in $DIRECTORIES; do
-        cd "$directory"
+        cd "${directory:?}"
+        # Build
         gradle build
-    done
-    ;;
-move)
-    for directory in $DIRECTORIES; do
-        cp "$directory"/build/libs/* "$3"
-        rm -rf "$directory"/build/libs/*
+        # Move
+        cp "${directory:?}/"build/libs/* "${DEBUG_DIR:?}/"java/papermc/plugins
+        # Clean
+        gradle clean
+        rm -rf "${directory:?}/"build
+        rm -rf "${directory:?}/"bin
+        rm -rf "${directory:?}/".gradle
     done
     ;;
 clean)
     for directory in $DIRECTORIES; do
-        cd "$directory"
+        cd "${directory:?}"
         gradle clean
-        rm -rf "$directory"/build
-        rm -rf "$directory"/bin
-        rm -rf "$directory"/.gradle
+        rm -rf "${directory:?}/"build
+        rm -rf "${directory:?}/"bin
+        rm -rf "${directory:?}/".gradle
     done
     ;;
 esac

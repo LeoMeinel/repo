@@ -9,14 +9,17 @@
 # -----
 ###
 
-NAME="LeoMeinel"
+SOURCE_DIR="$3"
+: "${SOURCE_DIR:="~/src"}"
+NAME="$2"
+: "${NAME:="LeoMeinel"}"
 
 PAGE=1
 case "$1" in
 all)
-    while curl -s "https://api.github.com/users/$2/repos?page=$PAGE&per_page=100" | grep -q "ssh_url"; do
-        SSH_URLS=$(curl -s "https://api.github.com/users/$2/repos?page=$PAGE&per_page=100" | grep -e 'ssh_url' | cut -d \" -f 4)
-        xargs -L 1 git -C "$3" clone <<<"$SSH_URLS"
+    while curl -s "https://api.github.com/users/$NAME/repos?page=$PAGE&per_page=100" | grep -q "ssh_url"; do
+        SSH_URLS=$(curl -s "https://api.github.com/users/$NAME/repos?page=$PAGE&per_page=100" | grep -e 'ssh_url' | cut -d \" -f 4)
+        xargs -L 1 git -C "$SOURCE_DIR" clone <<<"$SSH_URLS"
         PAGE=$((PAGE + 1))
     done
     ;;
